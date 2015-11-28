@@ -41,6 +41,7 @@ class TestMisc(unittest.TestCase):
             (['w3-1.2-0', '/opt/pkgs', 1], ('w3-1.2-0', '/opt/pkgs', 1)),
             ([r'w3-1.2-0', 'C:\A B\pkgs', 2], ('w3-1.2-0', r'C:\A B\pkgs', 2))]:
             self.assertEqual(inst.split_linkarg(args), res)
+<<<<<<< HEAD
 
 
 @pytest.mark.parametrize("args", [
@@ -79,6 +80,8 @@ class add_unlink_TestCase(unittest.TestCase):
         with self.mock_platform(windows=False):
             plan.add_unlink(actions, dist)
         self.assertEqual(2, len(actions[inst.UNLINK]))
+=======
+>>>>>>> origin/feature/instruction-arguments
 
 
 class TestAddDeaultsToSpec(unittest.TestCase):
