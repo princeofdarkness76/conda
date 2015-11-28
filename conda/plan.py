@@ -208,6 +208,7 @@ def plan_from_actions(actions):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     res = [('PREFIX', '%s' % actions[inst.PREFIX])]
 =======
     res = [(inst.PREFIX, actions[inst.PREFIX])]
@@ -221,6 +222,10 @@ def plan_from_actions(actions):
     res = [(inst.PREFIX, actions[inst.PREFIX])]
 
 >>>>>>> conda/feature/instruction-arguments
+=======
+    res = [(inst.PREFIX, actions[inst.PREFIX])]
+
+>>>>>>> origin/feature/instruction-arguments
 
     if sys.platform == 'win32':
         # Always link/unlink menuinst first on windows in case a subsequent
@@ -300,11 +305,14 @@ def ensure_linked_actions(dists, prefix):
                 actions[inst.LINK].append((dist, config.pkgs_dirs[0], lt))
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> conda/feature/instruction-arguments
 =======
 >>>>>>> origin/feature/instruction-arguments
 =======
 >>>>>>> conda/feature/instruction-arguments
+=======
+>>>>>>> origin/feature/instruction-arguments
             except (OSError, IOError):
                 actions[inst.LINK].append((dist,))
             finally:
@@ -325,6 +333,7 @@ def force_linked_actions(dists, index, prefix):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     actions[inst.PREFIX] = prefix
     actions['op_order'] = (inst.RM_FETCHED, inst.FETCH, inst.RM_EXTRACTED,
                            inst.EXTRACT, inst.UNLINK, inst.LINK)
@@ -333,6 +342,8 @@ def force_linked_actions(dists, index, prefix):
 >>>>>>> origin/feature/instruction-arguments
 =======
 >>>>>>> conda/feature/instruction-arguments
+=======
+>>>>>>> origin/feature/instruction-arguments
     actions[inst.PREFIX] = (prefix,)
     actions['op_order'] = (inst.RM_FETCHED, inst.FETCH, inst.RM_EXTRACTED, inst.EXTRACT,
                            inst.UNLINK, inst.LINK)
@@ -355,6 +366,7 @@ def force_linked_actions(dists, index, prefix):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             add_unlink(actions, dist)
         actions[inst.LINK].append(dist)
 =======
@@ -369,6 +381,10 @@ def force_linked_actions(dists, index, prefix):
             actions[inst.UNLINK].append((dist,))
         actions[inst.LINK].append((dist,))
 >>>>>>> conda/feature/instruction-arguments
+=======
+            actions[inst.UNLINK].append((dist,))
+        actions[inst.LINK].append((dist,))
+>>>>>>> origin/feature/instruction-arguments
     return actions
 
 # -------------------------------------------------------------------
@@ -522,6 +538,7 @@ def install_actions(prefix, index, specs, force=False, only_names=None, pinned=T
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     if actions[inst.LINK] and sys.platform != 'win32' and prefix != config.root_dir:
         actions[inst.SYMLINK_CONDA] = [config.root_dir]
 =======
@@ -536,11 +553,16 @@ def install_actions(prefix, index, specs, force=False, only_names=None, pinned=T
     if actions[inst.LINK] and sys.platform != 'win32':
         actions[inst.SYMLINK_CONDA].append([config.root_dir])
 >>>>>>> conda/feature/instruction-arguments
+=======
+    if actions[inst.LINK] and sys.platform != 'win32':
+        actions[inst.SYMLINK_CONDA].append([config.root_dir])
+>>>>>>> origin/feature/instruction-arguments
 
 <<<<<<< HEAD
     for dist in sorted(linked):
         name = install.name_dist(dist)
         if name in must_have and dist != must_have[name]:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -570,6 +592,9 @@ def install_actions(prefix, index, specs, force=False, only_names=None, pinned=T
 =======
             actions[inst.UNLINK].append((dist,))
 >>>>>>> conda/feature/instruction-arguments
+=======
+            actions[inst.UNLINK].append((dist,))
+>>>>>>> origin/feature/instruction-arguments
 
     return actions
 
@@ -610,9 +635,12 @@ def remove_actions(prefix, specs, index=None, pinned=True):
 
             actions[inst.UNLINK].append((dist,))
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> origin/feature/instruction-arguments
 =======
 >>>>>>> conda/feature/instruction-arguments
+=======
+>>>>>>> origin/feature/instruction-arguments
             if r and fn in index and r.track_features(fn):
                 features_actions = remove_features_actions(
                     prefix, index, r.track_features(fn))
@@ -643,6 +671,7 @@ def remove_features_actions(prefix, index, features):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             add_unlink(actions, dist)
         if r.features(fn).intersection(features):
             add_unlink(actions, dist)
@@ -661,6 +690,11 @@ def remove_features_actions(prefix, index, features):
         if r.features(fn).intersection(features):
             actions[inst.UNLINK].append((dist,))
 >>>>>>> conda/feature/instruction-arguments
+=======
+            actions[inst.UNLINK].append((dist,))
+        if r.features(fn).intersection(features):
+            actions[inst.UNLINK].append((dist,))
+>>>>>>> origin/feature/instruction-arguments
             subst = r.find_substitute(_linked, features, fn)
             if subst:
                 to_link.append(subst[:-8])
@@ -687,6 +721,7 @@ def revert_actions(prefix, revision=-1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         add_unlink(actions, dist)
 =======
         actions[inst.UNLINK].append((dist,))
@@ -697,11 +732,15 @@ def revert_actions(prefix, revision=-1):
 =======
         actions[inst.UNLINK].append((dist,))
 >>>>>>> conda/feature/instruction-arguments
+=======
+        actions[inst.UNLINK].append((dist,))
+>>>>>>> origin/feature/instruction-arguments
 
     return actions
 
 # ---------------------------- EXECUTION --------------------------
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -712,6 +751,8 @@ def revert_actions(prefix, revision=-1):
 >>>>>>> origin/feature/instruction-arguments
 =======
 >>>>>>> conda/feature/instruction-arguments
+=======
+>>>>>>> origin/feature/instruction-arguments
 def execute_actions(actions, index=None, verbose=False):
     plan = plan_from_actions(actions)
 

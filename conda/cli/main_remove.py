@@ -70,6 +70,7 @@ def configure_parser(sub_parsers, name='remove'):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         help="%s all packages, i.e., the entire environment." % name.capitalize(),
 =======
         help="%s all packages, i.e. the entire environment" % name,
@@ -80,10 +81,14 @@ def configure_parser(sub_parsers, name='remove'):
 =======
         help="%s all packages, i.e. the entire environment" % name,
 >>>>>>> conda/feature/instruction-arguments
+=======
+        help="%s all packages, i.e. the entire environment" % name,
+>>>>>>> origin/feature/instruction-arguments
     )
     p.add_argument(
         "--features",
         action="store_true",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -97,6 +102,9 @@ def configure_parser(sub_parsers, name='remove'):
 =======
         help="%s features (instead of packages)" % name,
 >>>>>>> conda/feature/instruction-arguments
+=======
+        help="%s features (instead of packages)" % name,
+>>>>>>> origin/feature/instruction-arguments
     )
     common.add_parser_no_pin(p)
     common.add_parser_channels(p)
@@ -125,6 +133,7 @@ def configure_parser(sub_parsers, name='remove'):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         help="Package names to %s from the environment." % name,
     ).completer = common.InstalledPackages
 =======
@@ -132,6 +141,8 @@ def configure_parser(sub_parsers, name='remove'):
 >>>>>>> origin/feature/instruction-arguments
 =======
 >>>>>>> conda/feature/instruction-arguments
+=======
+>>>>>>> origin/feature/instruction-arguments
         help="package names to %s from environment" % name,
     )
 >>>>>>> conda/feature/instruction-arguments
@@ -144,11 +155,14 @@ def execute(args, parser):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> origin/feature/instruction-arguments
 =======
 >>>>>>> conda/feature/instruction-arguments
+=======
+>>>>>>> origin/feature/instruction-arguments
     from conda.cli import pscheck
 >>>>>>> conda/feature/instruction-arguments
     from conda.install import rm_rf, linked
@@ -207,6 +221,7 @@ def execute(args, parser):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         actions = {inst.PREFIX: prefix}
         for dist in sorted(linked(prefix)):
             plan.add_unlink(actions, dist)
@@ -222,6 +237,10 @@ def execute(args, parser):
         actions = {inst.PREFIX: [prefix],
                    inst.UNLINK: [sorted(linked(prefix))]}
 >>>>>>> conda/feature/instruction-arguments
+=======
+        actions = {inst.PREFIX: [prefix],
+                   inst.UNLINK: [sorted(linked(prefix))]}
+>>>>>>> origin/feature/instruction-arguments
 
     else:
         specs = common.specs_from_args(args.package_names)
