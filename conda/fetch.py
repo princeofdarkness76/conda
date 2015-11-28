@@ -101,6 +101,7 @@ def fetch_repodata(url, cache_dir=None, use_cache=False, session=None):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                            headers=headers, proxies=session.proxies)
         resp.raise_for_status()
         if resp.status_code != 304:
@@ -128,6 +129,13 @@ def fetch_repodata(url, cache_dir=None, use_cache=False, session=None):
         if resp.status_code != 304:
             cache = json.loads(bz2.decompress(resp.raw.read()).decode('utf-8'))
 >>>>>>> conda/gzip
+=======
+                           headers=headers, proxies=session.proxies,
+                           verify=config.ssl_verify, stream=True)
+        resp.raise_for_status()
+        if resp.status_code != 304:
+            cache = json.loads(bz2.decompress(resp.raw.read()).decode('utf-8'))
+>>>>>>> origin/gzip
 =======
                            headers=headers, proxies=session.proxies,
                            verify=config.ssl_verify, stream=True)
