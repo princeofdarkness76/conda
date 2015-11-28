@@ -97,12 +97,20 @@ def fetch_repodata(url, cache_dir=None, use_cache=False, session=None):
 
     try:
         resp = session.get(url + 'repodata.json.bz2',
+<<<<<<< HEAD
                            headers=headers, proxies=session.proxies)
         resp.raise_for_status()
         if resp.status_code != 304:
             cache = json.loads(bz2.decompress(resp.content).decode('utf-8'))
             add_http_value_to_dict(resp, 'Etag', cache, '_etag')
             add_http_value_to_dict(resp, 'Last-Modified', cache, '_mod')
+=======
+                           headers=headers, proxies=session.proxies,
+                           verify=config.ssl_verify, stream=True)
+        resp.raise_for_status()
+        if resp.status_code != 304:
+            cache = json.loads(bz2.decompress(resp.raw.read()).decode('utf-8'))
+>>>>>>> conda/gzip
 
     except ValueError as e:
         raise RuntimeError("Invalid index file: %srepodata.json.bz2: %s" %
