@@ -1,10 +1,14 @@
 from __future__ import print_function, division, absolute_import
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import logging
 =======
 import re
 >>>>>>> conda/r
+=======
+import re
+>>>>>>> origin/r
 import sys
 import hashlib
 import collections

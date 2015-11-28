@@ -202,11 +202,14 @@ def args_func(args, p):
         args.func(args, p)
     except RuntimeError as e:
 <<<<<<< HEAD
+<<<<<<< HEAD
         if 'maximum recursion depth exceeded' in str(e):
             print_issue_message(e, use_json=use_json)
             raise
         common.error_and_exit(str(e), json=use_json)
 =======
+=======
+>>>>>>> origin/r
         # This is gloriously hacky.  Our recursive build functionality needs
         # to be able to distinguish between a failed conda build because a
         # built package couldn't be found for one of the dependencies, or a
@@ -223,7 +226,10 @@ def args_func(args, p):
                 f.write(missing)
         sys.stderr.write(err)
         sys.exit(retval)
+<<<<<<< HEAD
 >>>>>>> conda/r
+=======
+>>>>>>> origin/r
     except Exception as e:
         print_issue_message(e, use_json=use_json)
         raise  # as if we did not catch it
