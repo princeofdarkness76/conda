@@ -426,6 +426,7 @@ def get_pinned_specs(prefix):
     if not exists(pinfile):
         return []
     with open(pinfile) as f:
+<<<<<<< HEAD
         return [i for i in f.read().strip().splitlines() if i and not i.strip().startswith('#')]
 
 <<<<<<< HEAD
@@ -433,11 +434,18 @@ def get_pinned_specs(prefix):
 def install_actions(prefix, index, specs, force=False, only_names=None,
                     pinned=True, minimal_hint=False, update_deps=True):
 =======
+=======
+        return [i for i in f.read().strip().split('\n') if i and not i.strip().startswith('#')]
+
+>>>>>>> origin/installed
 def install_actions(prefix, index, specs, force=False, only_names=None, pinned=True, minimal_hint=False,
     use_instaled=True):
     if not use_instaled:
         raise NotImplementedError("not using use_installed is not implemented")
+<<<<<<< HEAD
 >>>>>>> conda/installed
+=======
+>>>>>>> origin/installed
     r = Resolve(index)
     linked = install.linked(prefix)
 
@@ -496,6 +504,7 @@ def install_actions(prefix, index, specs, force=False, only_names=None, pinned=T
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     if actions[inst.LINK] and sys.platform != 'win32' and prefix != config.root_dir:
         actions[inst.SYMLINK_CONDA] = [config.root_dir]
 =======
@@ -521,6 +530,11 @@ def install_actions(prefix, index, specs, force=False, only_names=None, pinned=T
             actions[inst.UNLINK].append((dist,))
 >>>>>>> origin/feature/instruction-arguments
 =======
+=======
+    if actions[LINK] and sys.platform != 'win32':
+        actions[SYMLINK_CONDA] = [config.root_dir]
+
+>>>>>>> origin/installed
     if not use_instaled:
         for dist in sorted(linked):
             name = install.name_dist(dist)

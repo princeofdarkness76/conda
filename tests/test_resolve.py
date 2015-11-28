@@ -438,10 +438,14 @@ def test_generate_eq():
         w[i + 1] = fn
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     eq, max_rhs = r.generate_version_eq(v, dists, [], specs, include0=True)
 =======
     eq, max_rhs = r.generate_version_eq(v, dists, (), include0=True)
 >>>>>>> conda/installed
+=======
+    eq, max_rhs = r.generate_version_eq(v, dists, (), include0=True)
+>>>>>>> origin/installed
     e = [(i, w[j]) for i, j in eq]
     # Should satisfy the following criteria:
     # - lower versions of the same package should should have higher
@@ -943,10 +947,14 @@ def test_generate_eq():
     assert max_rhs == 1 + 2 + 3 + 2 + 1 + 1 + 2 + 2 + 3 + 11 + 5 + 1 + 20 + 2 + 1 + 4 + 1 + 1 + 1
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     eq, max_rhs = r.generate_version_eq(v, dists, [], specs)
 =======
     eq, max_rhs = r.generate_version_eq(v, dists, ())
 >>>>>>> conda/installed
+=======
+    eq, max_rhs = r.generate_version_eq(v, dists, ())
+>>>>>>> origin/installed
     assert all(i > 0 for i, _ in eq)
     e = [(i, w[j]) for i, j in eq]
 
