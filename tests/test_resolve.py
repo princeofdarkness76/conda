@@ -439,6 +439,7 @@ def test_generate_eq():
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     eq, max_rhs = r.generate_version_eq(v, dists, [], specs, include0=True)
 =======
     eq, max_rhs = r.generate_version_eq(v, dists, (), include0=True)
@@ -446,6 +447,9 @@ def test_generate_eq():
 =======
     eq, max_rhs = r.generate_version_eq(v, dists, (), include0=True)
 >>>>>>> origin/installed
+=======
+    eq, max_rhs = r.generate_version_eq(v, dists, (), include0=True)
+>>>>>>> conda/installed
     e = [(i, w[j]) for i, j in eq]
     # Should satisfy the following criteria:
     # - lower versions of the same package should should have higher
@@ -944,6 +948,7 @@ def test_generate_eq():
         (0, u'zlib-1.2.7-0.tar.bz2')
     ]
 
+<<<<<<< HEAD
     assert max_rhs == 1 + 2 + 3 + 2 + 1 + 1 + 2 + 2 + 3 + 11 + 5 + 1 + 20 + 2 + 1 + 4 + 1 + 1 + 1
 
 <<<<<<< HEAD
@@ -955,6 +960,11 @@ def test_generate_eq():
 =======
     eq, max_rhs = r.generate_version_eq(v, dists, ())
 >>>>>>> origin/installed
+=======
+    assert max_rhs == 20 + 4 + 2 + 2 + 1
+
+    eq, max_rhs = r.generate_version_eq(v, dists, ())
+>>>>>>> conda/installed
     assert all(i > 0 for i, _ in eq)
     e = [(i, w[j]) for i, j in eq]
 

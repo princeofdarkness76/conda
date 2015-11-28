@@ -469,15 +469,21 @@ def install_actions(prefix, index, specs, force=False, only_names=None,
 =======
         return [i for i in f.read().strip().split('\n') if i and not i.strip().startswith('#')]
 
+<<<<<<< HEAD
 >>>>>>> origin/installed
+=======
+>>>>>>> conda/installed
 def install_actions(prefix, index, specs, force=False, only_names=None, pinned=True, minimal_hint=False,
     use_instaled=True):
     if not use_instaled:
         raise NotImplementedError("not using use_installed is not implemented")
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> conda/installed
 =======
 >>>>>>> origin/installed
+=======
+>>>>>>> conda/installed
     r = Resolve(index)
     linked = install.linked(prefix)
 
@@ -539,6 +545,7 @@ def install_actions(prefix, index, specs, force=False, only_names=None, pinned=T
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     if actions[inst.LINK] and sys.platform != 'win32' and prefix != config.root_dir:
         actions[inst.SYMLINK_CONDA] = [config.root_dir]
 =======
@@ -579,6 +586,11 @@ def install_actions(prefix, index, specs, force=False, only_names=None, pinned=T
         actions[SYMLINK_CONDA] = [config.root_dir]
 
 >>>>>>> origin/installed
+=======
+    if actions[LINK] and sys.platform != 'win32':
+        actions[SYMLINK_CONDA] = [config.root_dir]
+
+>>>>>>> conda/installed
     if not use_instaled:
         for dist in sorted(linked):
             name = install.name_dist(dist)

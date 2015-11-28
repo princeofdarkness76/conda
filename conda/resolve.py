@@ -5,12 +5,16 @@ import sys
 import logging
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 from itertools import combinations, chain
 >>>>>>> conda/installed
 =======
 from itertools import combinations, chain
 >>>>>>> origin/installed
+=======
+from itertools import combinations, chain
+>>>>>>> conda/installed
 from collections import defaultdict
 from functools import partial
 
@@ -606,6 +610,7 @@ class Resolve(object):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     def gen_clauses(self, v, dists, specs, features):
         groups = defaultdict(list)  # map name to list of filenames
         for fn in dists:
@@ -619,6 +624,11 @@ class Resolve(object):
         groups = defaultdict(list) # map name to list of filenames
         for fn in chain(dists, installed):
 >>>>>>> origin/installed
+=======
+    def gen_clauses(self, v, dists, specs, features, installed=()):
+        groups = defaultdict(list) # map name to list of filenames
+        for fn in chain(dists, installed):
+>>>>>>> conda/installed
             groups[self.index[fn]['name']].append(fn)
 
         for filenames in itervalues(groups):
@@ -684,12 +694,15 @@ class Resolve(object):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     def generate_version_eq(self, v, dists, installed_dists, specs,
         include0=False, update_deps=True):
         groups = defaultdict(list)  # map name to list of filenames
 =======
 =======
 >>>>>>> origin/installed
+=======
+>>>>>>> conda/installed
     def generate_version_eq(self, v, dists, installed, include0=False):
         groups = defaultdict(list) # map name to list of filenames
 >>>>>>> conda/installed
@@ -774,6 +787,7 @@ class Resolve(object):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     def graph_sort(self, must_have):
 
         def lookup(value):
@@ -805,11 +819,14 @@ class Resolve(object):
         log.debug("Features: %s" % str(features))
         log.debug("Installed: %s" % str(installed))
 =======
+=======
+>>>>>>> conda/installed
     def solve2(self, specs, features, installed=(), guess=True, alg='BDD',
         returnall=False, minimal_hint=False, unsat_only=False):
         log.debug("Solving for %s" % str(specs))
         log.debug("Features: %s" % str(features))
         log.debug("Installed: %s" % str(installed))
+<<<<<<< HEAD
         log.debug("Using alg %s" % alg)
 >>>>>>> conda/installed
 =======
@@ -833,6 +850,9 @@ class Resolve(object):
                 try_max_only = False
             else:
                 try_max_only = True
+=======
+        log.debug("Using alg %s" % alg)
+>>>>>>> conda/installed
 
         # XXX: Should try_max_only use the filtered list?
         if try_max_only:
@@ -865,6 +885,7 @@ class Resolve(object):
                             return [ret]
                         return ret
 
+<<<<<<< HEAD
         dists = self.get_dists(specs, filtered=True)
 
         v = {}  # map fn to variable number
@@ -873,6 +894,8 @@ class Resolve(object):
 =======
 =======
 >>>>>>> origin/installed
+=======
+>>>>>>> conda/installed
         # try:
         #     dists = self.get_dists(specs, max_only=True)
         # except NoPackagesFound:
@@ -967,20 +990,26 @@ class Resolve(object):
             return []
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         eq, max_rhs = self.generate_version_eq(v, dists, installed_dists,
             specs, update_deps=update_deps)
 =======
 =======
 >>>>>>> origin/installed
+=======
+>>>>>>> conda/installed
 
         clauses.update(extra_clauses)
 
         dists.update(installed_dists)
         eq, max_rhs = self.generate_version_eq(v, dists, installed)
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> conda/installed
 =======
 >>>>>>> origin/installed
+=======
+>>>>>>> conda/installed
 
 
         # Second common case, check if it's unsatisfiable
@@ -1026,6 +1055,7 @@ class Resolve(object):
         dotlog.debug("Finding the minimal solution")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         try:
             solutions = min_sat(clauses | constraints, N=m + 1, alg='iterate',
                 raise_on_max_n=True)
@@ -1053,6 +1083,11 @@ class Resolve(object):
         assert solutions, (specs, features, installed)
 
 >>>>>>> origin/installed
+=======
+        solutions = min_sat(clauses | constraints, N=N)
+        assert solutions, (specs, features, installed)
+
+>>>>>>> conda/installed
         if len(solutions) > 1 or log.getEffectiveLevel() <= logging.DEBUG:
             stdoutlog.info('Warning: %s possible package resolutions:' % len(solutions))
             for sol in solutions:
@@ -1073,9 +1108,12 @@ class Resolve(object):
             all_sols.append(this_sol)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> conda/installed
 =======
 >>>>>>> origin/installed
+=======
+>>>>>>> conda/installed
         if returnall:
             return all_sols
         return all_sols[0]
@@ -1249,6 +1287,7 @@ Note that the following features are enabled:
         try:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             return self.explicit(specs) or self.solve2(specs, features,
                 installed, minimal_hint=minimal_hint, update_deps=update_deps)
 =======
@@ -1259,6 +1298,10 @@ Note that the following features are enabled:
             return self.explicit(specs) or self.solve2(specs, features, installed,
                                                        minimal_hint=minimal_hint)
 >>>>>>> origin/installed
+=======
+            return self.explicit(specs) or self.solve2(specs, features, installed,
+                                                       minimal_hint=minimal_hint)
+>>>>>>> conda/installed
         except RuntimeError:
             stdoutlog.info('\n')
             raise
