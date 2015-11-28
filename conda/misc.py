@@ -257,7 +257,31 @@ def install_local_packages(prefix, paths, verbose=False):
             continue
         shutil.copyfile(src_path, dst_path)
 
+<<<<<<< HEAD
     force_extract_and_link(dists, prefix, verbose=verbose)
+=======
+    actions = defaultdict(list)
+    actions['PREFIX'] = [prefix]
+    actions['op_order'] = RM_EXTRACTED, EXTRACT, UNLINK, LINK
+    for dist in dists:
+        actions[RM_EXTRACTED].append(dist)
+        actions[EXTRACT].append(dist)
+        if install.is_linked(prefix, dist):
+            actions[UNLINK].append(dist)
+        actions[LINK].append(dist)
+    execute_actions(actions, verbose=verbose)
+
+    depends = []
+    for dist in dists:
+        try:
+            with open(join(pkgs_dir, dist, 'info', 'index.json')) as fi:
+                meta = json.load(fi)
+            depends.extend(meta['depends'])
+        except (IOError, KeyError):
+            continue
+    print('depends: %r' % depends)
+    return depends
+>>>>>>> conda/feature/instruction-arguments
 
 
 def environment_for_conda_environment(prefix=config.root_dir):

@@ -33,6 +33,7 @@ uninstall_help = "Alias for conda remove.  See conda remove --help."
 log = logging.getLogger(__name__)
 
 def configure_parser(sub_parsers, name='remove'):
+<<<<<<< HEAD
     if name == 'remove':
         p = sub_parsers.add_parser(
             name,
@@ -52,17 +53,34 @@ def configure_parser(sub_parsers, name='remove'):
             add_help=False,
         )
     common.add_parser_help(p)
+=======
+    p = sub_parsers.add_parser(
+        name,
+        formatter_class=RawDescriptionHelpFormatter,
+        description=descr % name,
+        help=help % name,
+        epilog=example % name,
+    )
+>>>>>>> conda/feature/instruction-arguments
     common.add_parser_yes(p)
     common.add_parser_json(p)
     p.add_argument(
         "--all",
         action="store_true",
+<<<<<<< HEAD
         help="%s all packages, i.e., the entire environment." % name.capitalize(),
+=======
+        help="%s all packages, i.e. the entire environment" % name,
+>>>>>>> conda/feature/instruction-arguments
     )
     p.add_argument(
         "--features",
         action="store_true",
+<<<<<<< HEAD
         help="%s features (instead of packages)." % name.capitalize(),
+=======
+        help="%s features (instead of packages)" % name,
+>>>>>>> conda/feature/instruction-arguments
     )
     common.add_parser_no_pin(p)
     common.add_parser_channels(p)
@@ -73,20 +91,38 @@ def configure_parser(sub_parsers, name='remove'):
     common.add_parser_use_index_cache(p)
     common.add_parser_use_local(p)
     common.add_parser_offline(p)
+<<<<<<< HEAD
     common.add_parser_pscheck(p)
+=======
+    p.add_argument(
+        "--force-pscheck",
+        action="store_true",
+        help=("force removal (when package process is running)"
+                if config.platform == 'win' else argparse.SUPPRESS)
+    )
+>>>>>>> conda/feature/instruction-arguments
     p.add_argument(
         'package_names',
         metavar='package_name',
         action="store",
         nargs='*',
+<<<<<<< HEAD
         help="Package names to %s from the environment." % name,
     ).completer = common.InstalledPackages
+=======
+        help="package names to %s from environment" % name,
+    )
+>>>>>>> conda/feature/instruction-arguments
     p.set_defaults(func=execute)
 
 
 def execute(args, parser):
     import conda.plan as plan
     import conda.instructions as inst
+<<<<<<< HEAD
+=======
+    from conda.cli import pscheck
+>>>>>>> conda/feature/instruction-arguments
     from conda.install import rm_rf, linked
     from conda import config
 
@@ -140,9 +176,14 @@ def execute(args, parser):
                                   json=args.json,
                                   error_type="CantRemoveRoot")
 
+<<<<<<< HEAD
         actions = {inst.PREFIX: prefix}
         for dist in sorted(linked(prefix)):
             plan.add_unlink(actions, dist)
+=======
+        actions = {inst.PREFIX: [prefix],
+                   inst.UNLINK: [sorted(linked(prefix))]}
+>>>>>>> conda/feature/instruction-arguments
 
     else:
         specs = common.specs_from_args(args.package_names)

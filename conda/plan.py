@@ -54,7 +54,8 @@ def display_actions(actions, index, show_channel_urls=None):
         print("\nThe following packages will be downloaded:\n")
 
         disp_lst = []
-        for dist in actions[inst.FETCH]:
+        for args in actions[inst.FETCH]:
+            dist = args[0]
             info = index[dist + '.tar.bz2']
             extra = '%15s' % human_bytes(info['size'])
             if show_channel_urls:
@@ -66,8 +67,8 @@ def display_actions(actions, index, show_channel_urls=None):
         if index and len(actions[inst.FETCH]) > 1:
             print(' ' * 4 + '-' * 60)
             print(" " * 43 + "Total: %14s" %
-                  human_bytes(sum(index[dist + '.tar.bz2']['size']
-                                  for dist in actions[inst.FETCH])))
+                  human_bytes(sum(index[args[0] + '.tar.bz2']['size']
+                                  for args in actions[inst.FETCH])))
 
     # package -> [oldver-oldbuild, newver-newbuild]
     packages = defaultdict(lambda: list(('', '')))
@@ -204,7 +205,12 @@ def plan_from_actions(actions):
         op_order = inst.action_codes
 
     assert inst.PREFIX in actions and actions[inst.PREFIX]
+<<<<<<< HEAD
     res = [('PREFIX', '%s' % actions[inst.PREFIX])]
+=======
+    res = [(inst.PREFIX, actions[inst.PREFIX])]
+
+>>>>>>> conda/feature/instruction-arguments
 
     if sys.platform == 'win32':
         # Always link/unlink menuinst first on windows in case a subsequent
@@ -226,9 +232,9 @@ def plan_from_actions(actions):
         if not actions[op]:
             continue
         if '_' not in op:
-            res.append((inst.PRINT, '%sing packages ...' % op.capitalize()))
+            res.append((inst.PRINT, ('%sing packages ...' % op.capitalize(),)))
         if op in inst.progress_cmds:
-            res.append((inst.PROGRESS, '%d' % len(actions[op])))
+            res.append((inst.PROGRESS, (len(actions[op]),)))
         for arg in actions[op]:
             res.append((op, arg))
     return res
@@ -243,7 +249,7 @@ def extracted_where(dist):
 
 def ensure_linked_actions(dists, prefix):
     actions = defaultdict(list)
-    actions[inst.PREFIX] = prefix
+    actions[inst.PREFIX] = (prefix,)
     for dist in dists:
         if install.is_linked(prefix, dist):
             continue
@@ -258,7 +264,7 @@ def ensure_linked_actions(dists, prefix):
                 lt = (install.LINK_SOFT if (config.allow_softlinks and
                                             sys.platform != 'win32') else
                       install.LINK_COPY)
-            actions[inst.LINK].append('%s %s %d' % (dist, extracted_in, lt))
+            actions[inst.LINK].append((dist, extracted_in, lt))
         else:
             # Make a guess from the first pkgs dir, which is where it will be
             # extracted
@@ -274,46 +280,63 @@ def ensure_linked_actions(dists, prefix):
                     lt = install.LINK_HARD
                 else:
                     lt = (install.LINK_SOFT if (config.allow_softlinks and
+<<<<<<< HEAD
                                                 sys.platform != 'win32') else
                           install.LINK_COPY)
                 actions[inst.LINK].append('%s %s %d' % (dist, config.pkgs_dirs[0], lt))
+=======
+                                            sys.platform != 'win32') else
+                      install.LINK_COPY)
+                actions[inst.LINK].append((dist, config.pkgs_dirs[0], lt))
+>>>>>>> conda/feature/instruction-arguments
             except (OSError, IOError):
-                actions[inst.LINK].append(dist)
+                actions[inst.LINK].append((dist,))
             finally:
                 try:
                     install.rm_rf(join(config.pkgs_dirs[0], dist))
                 except (OSError, IOError):
                     pass
 
-            actions[inst.EXTRACT].append(dist)
+            actions[inst.EXTRACT].append((dist,))
             if install.is_fetched(config.pkgs_dirs[0], dist):
                 continue
-            actions[inst.FETCH].append(dist)
+            actions[inst.FETCH].append((dist,))
     return actions
 
 
 def force_linked_actions(dists, index, prefix):
     actions = defaultdict(list)
+<<<<<<< HEAD
     actions[inst.PREFIX] = prefix
     actions['op_order'] = (inst.RM_FETCHED, inst.FETCH, inst.RM_EXTRACTED,
                            inst.EXTRACT, inst.UNLINK, inst.LINK)
+=======
+    actions[inst.PREFIX] = (prefix,)
+    actions['op_order'] = (inst.RM_FETCHED, inst.FETCH, inst.RM_EXTRACTED, inst.EXTRACT,
+                           inst.UNLINK, inst.LINK)
+>>>>>>> conda/feature/instruction-arguments
     for dist in dists:
         fn = dist + '.tar.bz2'
         pkg_path = join(config.pkgs_dirs[0], fn)
         if isfile(pkg_path):
             try:
                 if md5_file(pkg_path) != index[fn]['md5']:
-                    actions[inst.RM_FETCHED].append(dist)
-                    actions[inst.FETCH].append(dist)
+                    actions[inst.RM_FETCHED].append((dist,))
+                    actions[inst.FETCH].append((dist,))
             except KeyError:
                 sys.stderr.write('Warning: cannot lookup MD5 of: %s' % fn)
         else:
-            actions[inst.FETCH].append(dist)
-        actions[inst.RM_EXTRACTED].append(dist)
-        actions[inst.EXTRACT].append(dist)
+            actions[inst.FETCH].append((dist,))
+        actions[inst.RM_EXTRACTED].append((dist,))
+        actions[inst.EXTRACT].append((dist,))
         if isfile(join(prefix, 'conda-meta', dist + '.json')):
+<<<<<<< HEAD
             add_unlink(actions, dist)
         actions[inst.LINK].append(dist)
+=======
+            actions[inst.UNLINK].append((dist,))
+        actions[inst.LINK].append((dist,))
+>>>>>>> conda/feature/instruction-arguments
     return actions
 
 # -------------------------------------------------------------------
@@ -442,13 +465,22 @@ def install_actions(prefix, index, specs, force=False, only_names=None,
     else:
         actions = ensure_linked_actions(smh, prefix)
 
+<<<<<<< HEAD
     if actions[inst.LINK] and sys.platform != 'win32' and prefix != config.root_dir:
         actions[inst.SYMLINK_CONDA] = [config.root_dir]
+=======
+    if actions[inst.LINK] and sys.platform != 'win32':
+        actions[inst.SYMLINK_CONDA].append([config.root_dir])
+>>>>>>> conda/feature/instruction-arguments
 
     for dist in sorted(linked):
         name = install.name_dist(dist)
         if name in must_have and dist != must_have[name]:
+<<<<<<< HEAD
             add_unlink(actions, dist)
+=======
+            actions[inst.UNLINK].append((dist,))
+>>>>>>> conda/feature/instruction-arguments
 
     return actions
 
@@ -466,7 +498,7 @@ def remove_actions(prefix, specs, index=None, pinned=True):
     pinned_specs = get_pinned_specs(prefix)
 
     actions = defaultdict(list)
-    actions[inst.PREFIX] = prefix
+    actions[inst.PREFIX] = [prefix]
     for dist in sorted(linked):
         fn = dist + '.tar.bz2'
         if any(ms.match(fn) for ms in mss):
@@ -476,7 +508,11 @@ def remove_actions(prefix, specs, index=None, pinned=True):
                     "Cannot remove %s because it is pinned. Use --no-pin "
                     "to override." % dist)
 
+<<<<<<< HEAD
             add_unlink(actions, dist)
+=======
+            actions[inst.UNLINK].append((dist,))
+>>>>>>> conda/feature/instruction-arguments
             if r and fn in index and r.track_features(fn):
                 features_actions = remove_features_actions(
                     prefix, index, r.track_features(fn))
@@ -496,7 +532,7 @@ def remove_features_actions(prefix, index, features):
     r = Resolve(index)
 
     actions = defaultdict(list)
-    actions[inst.PREFIX] = prefix
+    actions[inst.PREFIX] = [prefix]
     _linked = [d + '.tar.bz2' for d in linked]
     to_link = []
     for dist in sorted(linked):
@@ -504,9 +540,15 @@ def remove_features_actions(prefix, index, features):
         if fn not in index:
             continue
         if r.track_features(fn).intersection(features):
+<<<<<<< HEAD
             add_unlink(actions, dist)
         if r.features(fn).intersection(features):
             add_unlink(actions, dist)
+=======
+            actions[inst.UNLINK].append((dist,))
+        if r.features(fn).intersection(features):
+            actions[inst.UNLINK].append((dist,))
+>>>>>>> conda/feature/instruction-arguments
             subst = r.find_substitute(_linked, features, fn)
             if subst:
                 to_link.append(subst[:-8])
@@ -530,16 +572,27 @@ def revert_actions(prefix, revision=-1):
 
     actions = ensure_linked_actions(state, prefix)
     for dist in curr - state:
+<<<<<<< HEAD
         add_unlink(actions, dist)
+=======
+        actions[inst.UNLINK].append((dist,))
+>>>>>>> conda/feature/instruction-arguments
 
     return actions
 
 # ---------------------------- EXECUTION --------------------------
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> conda/feature/instruction-arguments
 def execute_actions(actions, index=None, verbose=False):
     plan = plan_from_actions(actions)
-    with History(actions[inst.PREFIX]):
+
+    if not isinstance(actions[inst.PREFIX], (list, tuple)):
+        actions[inst.PREFIX] = [actions[inst.PREFIX]]
+
+    with History(actions[inst.PREFIX][0]):
         inst.execute_instructions(plan, index, verbose)
 
 

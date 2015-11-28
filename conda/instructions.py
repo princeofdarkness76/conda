@@ -1,11 +1,9 @@
 from logging import getLogger
-import re
 
 from conda import config
 from conda import install
 from conda.exceptions import InvalidInstruction
 from conda.fetch import fetch_pkg
-
 
 log = getLogger(__name__)
 
@@ -48,55 +46,52 @@ def fetch(index, dist):
     fetch_pkg(index[fn])
 
 
-def FETCH_CMD(state, arg):
-    fetch(state['index'], arg)
+def FETCH_CMD(state, dist):
+    fetch(state['index'], dist)
 
 
-def PROGRESS_CMD(state, arg):
+def PROGRESS_CMD(state, maxval):
     state['i'] = 0
-    state['maxval'] = int(arg)
-    getLogger('progress.start').info(state['maxval'])
+    state['maxval'] = maxval
+    getLogger('progress.start').info(maxval)
 
 
-def EXTRACT_CMD(state, arg):
-    install.extract(config.pkgs_dirs[0], arg)
+def EXTRACT_CMD(state, dist):
+    install.extract(config.pkgs_dirs[0], dist)
 
 
-def RM_EXTRACTED_CMD(state, arg):
-    install.rm_extracted(config.pkgs_dirs[0], arg)
+def RM_EXTRACTED_CMD(state, dist):
+    install.rm_extracted(config.pkgs_dirs[0], dist)
 
 
-def RM_FETCHED_CMD(state, arg):
-    install.rm_fetched(config.pkgs_dirs[0], arg)
+def RM_FETCHED_CMD(state, dist):
+    install.rm_fetched(config.pkgs_dirs[0], dist)
 
 
-def split_linkarg(arg):
+def split_linkarg(args):
     "Return tuple(dist, pkgs_dir, linktype)"
-    pat = re.compile(r'\s*(\S+)(?:\s+(.+?)\s+(\d+))?\s*$')
-    m = pat.match(arg)
-    dist, pkgs_dir, linktype = m.groups()
-    if pkgs_dir is None:
-        pkgs_dir = config.pkgs_dirs[0]
-    if linktype is None:
-        linktype = install.LINK_HARD
-    return dist, pkgs_dir, int(linktype)
+    if not isinstance(args, (list, tuple)):
+        args = (args,)
+    return _split_linkarg(*args)
 
 
-def link(prefix, arg, index=None):
-    dist, pkgs_dir, lt = split_linkarg(arg)
+def _split_linkarg(dist, pkgs_dir=config.pkgs_dirs[0], linktype=install.LINK_HARD):
+    return dist, pkgs_dir, linktype
+
+
+def LINK_CMD(state, dist, pkgs_dir=config.pkgs_dirs[0], lt=install.LINK_HARD):
+    prefix = state['prefix']
+    index = state['index']
     install.link(pkgs_dir, prefix, dist, lt, index=index)
 
 
-def LINK_CMD(state, arg):
-    link(state['prefix'], arg, index=state['index'])
+def UNLINK_CMD(state, dist):
+    install.unlink(state['prefix'], dist)
 
 
-def UNLINK_CMD(state, arg):
-    install.unlink(state['prefix'], arg)
+def SYMLINK_CONDA_CMD(state, root_dir):
+    install.symlink_conda(state['prefix'], root_dir)
 
-
-def SYMLINK_CONDA_CMD(state, arg):
-    install.symlink_conda(state['prefix'], arg)
 
 # Map instruction to command (a python function)
 commands = {
@@ -132,20 +127,29 @@ def execute_instructions(plan, index=None, verbose=False, _commands=None):
 
     state = {'i': None, 'prefix': config.root_dir, 'index': index}
 
-    for instruction, arg in plan:
+    for instruction, args in plan:
 
-        log.debug(' %s(%r)' % (instruction, arg))
+        if not isinstance(args, (list, tuple)):
+            args = (args,)
+
+        log.debug(' %s%r' % (instruction, args))
 
         if state['i'] is not None and instruction in progress_cmds:
             state['i'] += 1
+<<<<<<< HEAD
             getLogger('progress.update').info((install.name_dist(arg),
                 state['i']-1))
         cmd = _commands.get(instruction)
+=======
+            getLogger('progress.update').info((args[0], state['i']))
+
+        cmd = commands.get(instruction)
+>>>>>>> conda/feature/instruction-arguments
 
         if cmd is None:
             raise InvalidInstruction(instruction)
 
-        cmd(state, arg)
+        cmd(state, *args)
 
         if (state['i'] is not None and instruction in progress_cmds
                 and state['maxval'] == state['i']):
