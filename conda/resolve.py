@@ -3,6 +3,10 @@ from __future__ import print_function, division, absolute_import
 import re
 import sys
 import logging
+<<<<<<< HEAD
+=======
+from itertools import combinations, chain
+>>>>>>> conda/installed
 from collections import defaultdict
 from functools import partial
 
@@ -596,9 +600,15 @@ class Resolve(object):
         add_dependents(root_fn, max_only=max_only)
         return res
 
+<<<<<<< HEAD
     def gen_clauses(self, v, dists, specs, features):
         groups = defaultdict(list)  # map name to list of filenames
         for fn in dists:
+=======
+    def gen_clauses(self, v, dists, specs, features, installed=()):
+        groups = defaultdict(list) # map name to list of filenames
+        for fn in chain(dists, installed):
+>>>>>>> conda/installed
             groups[self.index[fn]['name']].append(fn)
 
         for filenames in itervalues(groups):
@@ -612,13 +622,13 @@ class Resolve(object):
                         # e.g. NOT (numpy-1.6 AND numpy-1.7)
                         yield (-v1, -v2)
 
-        for fn1 in dists:
+        for fn1 in chain(dists, installed):
             for ms in self.ms_depends(fn1):
                 # ensure dependencies are installed
                 # e.g. numpy-1.7 IMPLIES (python-2.7.3 OR python-2.7.4 OR ...)
                 clause = [-v[fn1]]
                 for fn2 in self.find_matches(ms):
-                    if fn2 in dists:
+                    if fn2 in chain(dists, installed):
                         clause.append(v[fn2])
                 assert len(clause) > 1, '%s %r' % (fn1, ms)
                 yield tuple(clause)
@@ -662,15 +672,22 @@ class Resolve(object):
             assert len(clause) >= 1, ms
             yield tuple(clause)
 
+<<<<<<< HEAD
     def generate_version_eq(self, v, dists, installed_dists, specs,
         include0=False, update_deps=True):
         groups = defaultdict(list)  # map name to list of filenames
+=======
+    def generate_version_eq(self, v, dists, installed, include0=False):
+        groups = defaultdict(list) # map name to list of filenames
+>>>>>>> conda/installed
         for fn in sorted(dists):
             groups[self.index[fn]['name']].append(fn)
 
         eq = []
         max_rhs = 0
-        for filenames in sorted(itervalues(groups)):
+        packagecoeff = defaultdict(int) # Maximum coeff for a given package
+        for package in groups:
+            filenames = groups[package]
             pkgs = sorted(filenames, key=lambda i: dists[i], reverse=True)
             if (not update_deps and not any(s.split()[0] == pkgs[0].rsplit('-', 2)[0] for s in specs)):
                 rearrange = True
@@ -699,7 +716,17 @@ class Resolve(object):
                 if i or include0:
                     eq += [(i, v[pkg])]
                 prev = pkg
+            packagecoeff[package] = i
             max_rhs += i
+
+        installed_groups = defaultdict(list)
+        for fn in sorted(installed):
+            # These lists should never be more than length 1
+            installed_groups[self.index[fn]['name']].append(fn)
+
+        for package in installed_groups:
+            eq += [(packagecoeff[package] + 1, -v[package])]
+            max_rhs += packagecoeff[package] + 1
 
         return eq, max_rhs
 
@@ -732,6 +759,7 @@ class Resolve(object):
             self.clear_filter()
         return dists
 
+<<<<<<< HEAD
     def graph_sort(self, must_have):
 
         def lookup(value):
@@ -762,12 +790,21 @@ class Resolve(object):
         log.debug("Solving for %s" % str(specs))
         log.debug("Features: %s" % str(features))
         log.debug("Installed: %s" % str(installed))
+=======
+    def solve2(self, specs, features, installed=(), guess=True, alg='BDD',
+        returnall=False, minimal_hint=False, unsat_only=False):
+        log.debug("Solving for %s" % str(specs))
+        log.debug("Features: %s" % str(features))
+        log.debug("Installed: %s" % str(installed))
+        log.debug("Using alg %s" % alg)
+>>>>>>> conda/installed
 
         # This won't packages that aren't in the index, but there isn't much
         # we can do with such packages here anyway.
         installed_dists = {pkg: Package(pkg, self.index[pkg]) for pkg in
             installed if pkg in self.index}
 
+<<<<<<< HEAD
         if try_max_only is None:
             if unsat_only or update_deps:
                 try_max_only = False
@@ -810,18 +847,109 @@ class Resolve(object):
         v = {}  # map fn to variable number
         w = {}  # map variable number to fn
         i = -1  # in case the loop doesn't run
+=======
+        # try:
+        #     dists = self.get_dists(specs, max_only=True)
+        # except NoPackagesFound:
+        #     # Handle packages that are not included because some dependencies
+        #     # couldn't be found.
+        #     pass
+        # else:
+        #     v = {} # map fn to variable number
+        #     w = {} # map variable number to fn
+        #     i = -1 # in case the loop doesn't run
+        #     for i, fn in enumerate(sorted(dists)):
+        #         v[fn] = i + 1
+        #         w[i + 1] = fn
+        #     m = i + 1
+        #
+        #     dotlog.debug("Solving using max dists only")
+        #     clauses = self.gen_clauses(v, dists, specs, features)
+        #     solutions = min_sat(clauses)
+        #
+        #
+        #     if len(solutions) == 1:
+        #         ret = [w[lit] for lit in solutions.pop(0) if 0 < lit <= m]
+        #         if returnall:
+        #             return [ret]
+        #         return ret
+
+        dists = self.get_dists(specs)
+
+        # Map variables to the dists to be installed
+        v = {} # map fn to variable number
+        w = {} # map variable number to fn
+        i = -1 # in case the loop doesn't run
+>>>>>>> conda/installed
         for i, fn in enumerate(sorted(dists)):
             v[fn] = i + 1
             w[i + 1] = fn
         m = i + 1
 
-        clauses = set(self.gen_clauses(v, dists, specs, features))
+        # Get all related packages to the currently installed packages
+        # (dependencies and other versions)
+        installed_deps = list(installed)
+        for pkg in installed:
+            installed_deps.extend(self.all_deps(pkg))
+            installed_deps.extend(list(self.get_dists([self.index[pkg]['name']])))
+        installed_deps = sorted(set(installed_deps))
+
+        # TODO: This won't handle packages that aren't found any more. We
+        # should get this metadata directly from the package.
+        installed_dists = {pkg: Package(pkg, self.index[pkg]) for pkg in installed_deps}
+
+        # Add installed packages and related packages to the variables
+        for fn in installed_deps:
+            if fn not in v:
+                m += 1
+                w[m] = fn
+                v[fn] = m
+
+        # m is the largest literal. N is the largest literal representing an
+        # actual package.
+        N = m
+
+        # Create variables representing unversioned packages. e.g., 'python'
+        # means any version of python i.e., python 2.7.6 | python 3.3.5 | ...
+        packages = defaultdict(list)
+        for fn in sorted(set(installed_deps) | set(dists)):
+            package = self.index[fn]['name']
+            if package not in v:
+                m += 1
+                w[m] = package
+                v[package] = m
+            packages[package].append(fn)
+
+        # Add clauses to correspond unversioned package variables to the
+        # actual packages variables.
+        extra_clauses = []
+        for package in packages:
+            # package <=> fn1 | fn2 | fn3 | ...
+            # package -> fn1 | fn2 | ... == -package | fn1 | fn2 | ...
+            extra_clauses.append([-v[package]] + [v[fn] for fn in packages[package]])
+            # fn1 | fn2 | ... -> package == [-fn1 | package] AND [-fn2 |
+            # package] AND ...
+            for fn in packages[package]:
+                extra_clauses.append([-v[fn], v[package]])
+
+        # Generate all the clauses to represent the relationships between
+        # packages, e.g., dependencies, conflicts, only a single version of
+        # each package, features, etc.
+        clauses = set(self.gen_clauses(v, dists, specs, features, installed_deps))
         if not clauses:
             if returnall:
                 return [[]]
             return []
+<<<<<<< HEAD
         eq, max_rhs = self.generate_version_eq(v, dists, installed_dists,
             specs, update_deps=update_deps)
+=======
+
+        clauses.update(extra_clauses)
+
+        dists.update(installed_dists)
+        eq, max_rhs = self.generate_version_eq(v, dists, installed)
+>>>>>>> conda/installed
 
 
         # Second common case, check if it's unsatisfiable
@@ -865,6 +993,7 @@ class Resolve(object):
                 constraints = set([])
 
         dotlog.debug("Finding the minimal solution")
+<<<<<<< HEAD
         try:
             solutions = min_sat(clauses | constraints, N=m + 1, alg='iterate',
                 raise_on_max_n=True)
@@ -883,9 +1012,33 @@ class Resolve(object):
         log.debug("Older versions in the solution(s):")
         for sol in solutions:
             log.debug([(i, w[j]) for i, j in eq if j in sol])
+=======
+        solutions = min_sat(clauses | constraints, N=N)
+        assert solutions, (specs, features, installed)
+
+        if len(solutions) > 1 or log.getEffectiveLevel() <= logging.DEBUG:
+            stdoutlog.info('Warning: %s possible package resolutions:' % len(solutions))
+            for sol in solutions:
+                stdoutlog.info('\t install: %s' % ([w[lit] for lit in sol if 0 < lit <= N and lit in
+                    w],))
+                stdoutlog.info('\t remove: %s' % ([w[-lit] for lit in sol if 0 < abs(lit) <= N and
+                    -lit in w and w[-lit] in installed],))
+                stdoutlog.info('')
+
+        all_sols = []
+        for sol in solutions:
+            this_sol = []
+            for lit in range(1, N + 1):
+                if lit in sol:
+                    this_sol.append(w[lit])
+                elif w[lit] in installed: # -lit in sol
+                    this_sol.append('remove ' + w[lit])
+            all_sols.append(this_sol)
+
+>>>>>>> conda/installed
         if returnall:
-            return [[w[lit] for lit in sol if 0 < lit <= m] for sol in solutions]
-        return [w[lit] for lit in solutions.pop(0) if 0 < lit <= m]
+            return all_sols
+        return all_sols[0]
 
     @staticmethod
     def clause_pkg_name(i, w):
@@ -1054,8 +1207,13 @@ Note that the following features are enabled:
 
         stdoutlog.info("Solving package specifications: ")
         try:
+<<<<<<< HEAD
             return self.explicit(specs) or self.solve2(specs, features,
                 installed, minimal_hint=minimal_hint, update_deps=update_deps)
+=======
+            return self.explicit(specs) or self.solve2(specs, features, installed,
+                                                       minimal_hint=minimal_hint)
+>>>>>>> conda/installed
         except RuntimeError:
             stdoutlog.info('\n')
             raise

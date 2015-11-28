@@ -428,9 +428,16 @@ def get_pinned_specs(prefix):
     with open(pinfile) as f:
         return [i for i in f.read().strip().splitlines() if i and not i.strip().startswith('#')]
 
+<<<<<<< HEAD
 
 def install_actions(prefix, index, specs, force=False, only_names=None,
                     pinned=True, minimal_hint=False, update_deps=True):
+=======
+def install_actions(prefix, index, specs, force=False, only_names=None, pinned=True, minimal_hint=False,
+    use_instaled=True):
+    if not use_instaled:
+        raise NotImplementedError("not using use_installed is not implemented")
+>>>>>>> conda/installed
     r = Resolve(index)
     linked = install.linked(prefix)
 
@@ -445,14 +452,20 @@ def install_actions(prefix, index, specs, force=False, only_names=None,
     add_defaults_to_specs(r, linked, specs)
 
     must_have = {}
+    mustnt_have = {}
     for fn in r.solve(specs, [d + '.tar.bz2' for d in linked],
                       config.track_features, minimal_hint=minimal_hint,
                       update_deps=update_deps):
         dist = fn[:-8]
         name = install.name_dist(dist)
-        if only_names and name not in only_names:
-            continue
-        must_have[name] = dist
+        if name.startswith('remove '):
+            name = name.split('remove ', 1)[1]
+            dist = dist.split('remove ', 1)[1]
+            mustnt_have[name] = dist
+        else:
+            if only_names and name not in only_names:
+                continue
+            must_have[name] = dist
 
     if is_root_prefix(prefix):
         for name in config.foreign:
@@ -494,6 +507,7 @@ def install_actions(prefix, index, specs, force=False, only_names=None,
         actions[inst.SYMLINK_CONDA].append([config.root_dir])
 >>>>>>> origin/feature/instruction-arguments
 
+<<<<<<< HEAD
     for dist in sorted(linked):
         name = install.name_dist(dist)
         if name in must_have and dist != must_have[name]:
@@ -506,6 +520,17 @@ def install_actions(prefix, index, specs, force=False, only_names=None,
 =======
             actions[inst.UNLINK].append((dist,))
 >>>>>>> origin/feature/instruction-arguments
+=======
+    if not use_instaled:
+        for dist in sorted(linked):
+            name = install.name_dist(dist)
+            if name in must_have and dist != must_have[name]:
+                actions[UNLINK].append(dist)
+    else:
+        for name in sorted(mustnt_have):
+            dist = mustnt_have[name]
+            actions[UNLINK].append(dist)
+>>>>>>> conda/installed
 
     return actions
 
