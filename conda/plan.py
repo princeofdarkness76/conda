@@ -424,9 +424,15 @@ def install_actions(prefix, index, specs, force=False, only_names=None,
         # starting with '_', mainly to allow conda-build to build conda
         pass
     else:
+<<<<<<< HEAD
         # disallow conda from being installed into all other environments
         if 'conda' in must_have or 'conda-env' in must_have:
             sys.exit("Error: 'conda' can only be installed into the "
+=======
+        # discard conda from other environments
+        if 'conda' in must_have and not config.TEST_INSTALL:
+            sys.exit("Error: 'conda' can only be installed into "
+>>>>>>> conda/feature/add-conda-recipe
                      "root environment")
 
     smh = r.graph_sort(must_have)

@@ -4,4 +4,8 @@
 build/
 dist/
 docs/build
+<<<<<<< HEAD
 .idea/
+=======
+MANIFEST
+>>>>>>> conda/feature/add-conda-recipe
