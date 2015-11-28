@@ -4,8 +4,13 @@ import pycosat
 import pytest
 
 from conda.compat import log2, ceil
+<<<<<<< HEAD
 from conda.logic import (Linear, Clauses, true, false, sat, min_sat,
     minimal_unsatisfiable_subset)
+=======
+from conda.logic import (Linear, Clauses, true, false, generate_constraints,
+    sat, min_sat)
+>>>>>>> conda/min_constraints
 
 from tests.helpers import raises
 
@@ -809,6 +814,7 @@ def test_min_sat():
             [1, -2, -3, -4],
             [1, -2, 3, -4],
             ]
+<<<<<<< HEAD
         assert min_sat([[1], [-1]], alg=alg) == []
 
 def test_minimal_unsatisfiable_subset():
@@ -832,3 +838,7 @@ def test_minimal_unsatisfiable_subset():
         res = minimal_unsatisfiable_subset(perm)
         assert sorted(res) in [[[-1], [1]], [[-2], [2]]]
         assert not sat(res)
+=======
+
+# TODO: Test generate_constraints and bisect_constraints
+>>>>>>> conda/min_constraints

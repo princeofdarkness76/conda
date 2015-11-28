@@ -26,6 +26,7 @@ being used will only be used in the positive or the negative, respectively
 """
 import sys
 from collections import defaultdict
+<<<<<<< HEAD
 from functools import total_ordering, partial
 from itertools import chain
 import logging
@@ -34,6 +35,15 @@ from conda.compat import log2, ceil, range, zip
 from conda.utils import memoize
 
 dotlog = logging.getLogger('dotupdate')
+=======
+from functools import total_ordering
+from itertools import islice, chain
+import logging
+
+from conda.compat import log2, ceil
+from conda.utils import memoize
+
+>>>>>>> conda/min_constraints
 log = logging.getLogger(__name__)
 
 # Custom classes for true and false. Using True and False is too risky, since
@@ -444,6 +454,7 @@ class Linear(object):
 
     __repr__ = __str__
 
+<<<<<<< HEAD
 def evaluate_eq(eq, sol):
     """
     Evaluate an equation at a solution
@@ -472,11 +483,30 @@ def generate_constraints(eq, m, rhs, alg='BDD', sorter_cache={}):
                 sorter_cache.popitem()
             m = C.build_sorter(l)
             sorter_cache[l.equation] = m, C
+=======
+
+def generate_constraints(eq, m, rhs, alg='sorter', sorter_cache={}):
+    l = Linear(eq, rhs)
+    if not l:
+        raise StopIteration
+    C = Clauses(m)
+    if alg == 'BDD':
+        yield [C.build_BDD(l)]
+    elif alg == 'BDD_recursive':
+        yield [C.build_BDD_recursive(l)]
+    elif alg == 'sorter':
+        if l.hashable_equation in sorter_cache:
+            m, C = sorter_cache[l.hashable_equation]
+        else:
+            m = C.build_sorter(l)
+            sorter_cache[l.hashable_equation] = m, C
+>>>>>>> conda/min_constraints
 
         if l.rhs[0]:
             # Output must be between lower bound and upper bound, meaning
             # the lower bound of the sorted output must be true and one more
             # than the upper bound should be false.
+<<<<<<< HEAD
             additional_clauses.add((m[l.rhs[0]-1],))
             additional_clauses.add((-m[l.rhs[1]],))
         else:
@@ -488,23 +518,44 @@ def generate_constraints(eq, m, rhs, alg='BDD', sorter_cache={}):
     return C.clauses | additional_clauses
 
 def bisect_constraints(min_rhs, max_rhs, clauses, func, increment=10, evaluate_func=None):
+=======
+            yield [m[l.rhs[0]-1]]
+            yield [-m[l.rhs[1]]]
+        else:
+            # The lower bound is zero, which is always true.
+            yield [-m[l.rhs[1]]]
+    else:
+        raise ValueError("alg must be one of 'BDD', 'BDD_recursive', or 'sorter'")
+
+    for clause in C.clauses:
+        yield list(clause)
+
+def bisect_constraints(min_rhs, max_rhs, clauses, func, increment=10):
+>>>>>>> conda/min_constraints
     """
     Bisect the solution space of a constraint, to minimize it.
 
     func should be a function that is called with the arguments func(lo_rhs,
     hi_rhs) and returns a list of constraints.
 
+<<<<<<< HEAD
     The midpoint of the bisection will not be more than lo_value + increment.
     To not use it, set a very large increment. The increment argument should
     be used if you expect the optimal solution to be near 0.
 
     If evalaute_func is given, it is used to evaluate solutions to aid in the bisection.
+=======
+    The midpoint of the bisection will not happen more than lo value +
+    increment.  To not use it, set a very large increment. The increment
+    argument should be used if you expect the optimal solution to be near 0.
+>>>>>>> conda/min_constraints
 
     """
     lo, hi = [min_rhs, max_rhs]
     while True:
         mid = min([lo + increment, (lo + hi)//2])
         rhs = [lo, mid]
+<<<<<<< HEAD
 
         dotlog.debug("Building the constraint with rhs: %s" % rhs)
         constraints = func(*rhs)
@@ -516,6 +567,20 @@ def bisect_constraints(min_rhs, max_rhs, clauses, func, increment=10, evaluate_f
 
         dotlog.debug("Checking for solutions with rhs:  %s" % rhs)
         solution = sat(chain(clauses, constraints))
+=======
+        log.debug("Building the constraint with rhs: %s" % rhs)
+        sys.stdout.write('.')
+        sys.stdout.flush()
+        constraints = func(*rhs)
+        if constraints[0] == [false]:
+            # build_BDD returns false if the rhs is too big to be
+            # satisfied. XXX: This probably indicates a bug.
+            break
+        if constraints[0] == [true]:
+            constraints = []
+        log.debug("Checking for solutions with rhs: %s" % rhs)
+        solution = sat(clauses + constraints)
+>>>>>>> conda/min_constraints
         if lo >= hi:
             break
         if solution:
@@ -523,25 +588,33 @@ def bisect_constraints(min_rhs, max_rhs, clauses, func, increment=10, evaluate_f
                 break
             # bisect good
             hi = mid
+<<<<<<< HEAD
             if evaluate_func:
                 eval_hi = evaluate_func(solution)
                 log.debug("Evaluated value: %s" % eval_hi)
                 hi = min(eval_hi, hi)
+=======
+>>>>>>> conda/min_constraints
         else:
             # bisect bad
             lo = mid+1
     return constraints
 
+<<<<<<< HEAD
 class MaximumIterationsError(Exception):
     pass
 
 # TODO: alg='sorter' can be faster, especially when the main algorithm is sorter
 def min_sat(clauses, max_n=1000, N=None, alg='sorter', raise_on_max_n=False):
+=======
+def min_sat(clauses, max_n=1000, N=None, alg='iterate'):
+>>>>>>> conda/min_constraints
     """
     Calculate the SAT solutions for the `clauses` for which the number of true
     literals from 1 to N is minimal.  Returned is the list of those solutions.
     When the clauses are unsatisfiable, an empty list is returned.
 
+<<<<<<< HEAD
     alg can be any algorithm supported by generate_constraints, or 'iterate',
     which iterates all solutions and finds the smallest.
 
@@ -553,19 +626,29 @@ def min_sat(clauses, max_n=1000, N=None, alg='sorter', raise_on_max_n=False):
 
     """
     log.debug("min_sat using alg: %s" % alg)
+=======
+    alg can be any algorithm supported by generate_constraints, or 'iterate",
+    which iterates all solutions and finds the smallest.
+    """
+>>>>>>> conda/min_constraints
     try:
         import pycosat
     except ImportError:
         sys.exit('Error: could not import pycosat (required for dependency '
                  'resolving)')
 
+<<<<<<< HEAD
     if not clauses:
         return []
     m = max(map(abs, chain(*clauses)))
+=======
+    m = max(chain(*clauses))
+>>>>>>> conda/min_constraints
     if not N:
         N = m
     if alg == 'iterate':
         min_tl, solutions = sys.maxsize, []
+<<<<<<< HEAD
         try:
             pycosat.itersolve({(1,)})
         except TypeError:
@@ -574,11 +657,15 @@ def min_sat(clauses, max_n=1000, N=None, alg='sorter', raise_on_max_n=False):
             clauses = list(map(list, clauses))
         i = -1
         for sol, i in zip(pycosat.itersolve(clauses), range(max_n)):
+=======
+        for sol in islice(pycosat.itersolve(clauses), max_n):
+>>>>>>> conda/min_constraints
             tl = sum(lit > 0 for lit in sol[:N]) # number of true literals
             if tl < min_tl:
                 min_tl, solutions = tl, [sol]
             elif tl == min_tl:
                 solutions.append(sol)
+<<<<<<< HEAD
         log.debug("Iterate ran %s times" % (i + 1))
         if i + 1 == max_n and raise_on_max_n:
             raise MaximumIterationsError("min_sat ran max_n times")
@@ -599,6 +686,16 @@ def min_sat(clauses, max_n=1000, N=None, alg='sorter', raise_on_max_n=False):
             evaluate_func=evaluate_func, increment=1000)
 
         return min_sat(list(chain(clauses, constraints)), max_n=max_n, N=N, alg='iterate')
+=======
+        return solutions
+    else:
+        def func(lo, hi):
+            return list(generate_constraints([(1, i) for i in range(1, N+1)], m,
+                [lo, hi], alg=alg))
+        constraints = bisect_constraints(0, N, clauses, func)
+        return min_sat(clauses + constraints, max_n=max_n, N=N, alg='iterate')
+
+>>>>>>> conda/min_constraints
 
 def sat(clauses):
     """
@@ -614,6 +711,7 @@ def sat(clauses):
         sys.exit('Error: could not import pycosat (required for dependency '
                  'resolving)')
 
+<<<<<<< HEAD
     try:
         pycosat.itersolve({(1,)})
     except TypeError:
@@ -735,3 +833,9 @@ def minimal_unsatisfiable_subset(clauses, sat=sat, log=False):
     ret = minimal_unsat(clauses)
     stop()
     return ret
+=======
+    solution = pycosat.solve(clauses)
+    if solution == "UNSAT" or solution == "UNKNOWN": # wtf https://github.com/ContinuumIO/pycosat/issues/14
+        return []
+    return solution
+>>>>>>> conda/min_constraints

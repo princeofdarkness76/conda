@@ -1,8 +1,9 @@
 from __future__ import print_function, division, absolute_import
 
-import re
 import sys
+import re
 import logging
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -15,10 +16,14 @@ from itertools import combinations, chain
 =======
 from itertools import combinations, chain
 >>>>>>> conda/installed
+=======
+from itertools import combinations
+>>>>>>> conda/min_constraints
 from collections import defaultdict
 from functools import partial
 
 from conda.utils import memoize
+<<<<<<< HEAD
 from conda.compat import itervalues, iteritems, string_types, zip_longest
 from conda.logic import (false, true, sat, min_sat, generate_constraints,
     bisect_constraints, evaluate_eq, minimal_unsatisfiable_subset,
@@ -26,6 +31,11 @@ from conda.logic import (false, true, sat, min_sat, generate_constraints,
 from conda.console import setup_handlers
 from conda import config
 from conda.toposort import toposort
+=======
+from conda.compat import itervalues, iteritems
+from conda.logic import (Clauses, Linear, false, true, sat, min_sat,
+    generate_constraints, bisect_constraints)
+>>>>>>> conda/min_constraints
 
 log = logging.getLogger(__name__)
 dotlog = logging.getLogger('dotupdate')
@@ -1034,6 +1044,7 @@ class Resolve(object):
 
         log.debug("Using alg %s" % alg)
 
+<<<<<<< HEAD
         def version_constraints(lo, hi):
             return set(generate_constraints(eq, m, [lo, hi], alg=alg))
 
@@ -1041,6 +1052,13 @@ class Resolve(object):
         evaluate_func = partial(evaluate_eq, eq)
         constraints = bisect_constraints(0, max_rhs, clauses,
             version_constraints, evaluate_func=evaluate_func)
+=======
+        sys.stdout.write("Finding package solution")
+        sys.stdout.flush()
+        # Check the common case first
+        log.debug("Building the constraint with rhs: [0, 0]")
+        constraints = list(generate_constraints(eq, m, [0, 0], alg=alg))
+>>>>>>> conda/min_constraints
 
         # Only relevant for build_BDD
         if constraints and false in constraints:
