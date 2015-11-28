@@ -74,6 +74,7 @@ def split_linkarg(args):
         args = (args,)
     return _split_linkarg(*args)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> origin/feature/instruction-arguments
@@ -95,12 +96,19 @@ def UNLINK_CMD(state, dist):
 def _split_linkarg(dist, pkgs_dir=config.pkgs_dirs[0], linktype=install.LINK_HARD):
     return dist, pkgs_dir, linktype
 
+=======
+
+
+def _split_linkarg(dist, pkgs_dir=config.pkgs_dirs[0], linktype=install.LINK_HARD):
+    return dist, pkgs_dir, linktype
+>>>>>>> conda/feature/instruction-arguments
 
 def LINK_CMD(state, dist, pkgs_dir=config.pkgs_dirs[0], lt=install.LINK_HARD):
     prefix = state['prefix']
     index = state['index']
     install.link(pkgs_dir, prefix, dist, lt, index=index)
 
+<<<<<<< HEAD
 >>>>>>> origin/feature/instruction-arguments
 
 def UNLINK_CMD(state, dist):
@@ -116,6 +124,21 @@ def SYMLINK_CONDA_CMD(state, root_dir):
 
 =======
 >>>>>>> origin/feature/instruction-arguments
+=======
+def LINK_CMD(state, dist, pkgs_dir=config.pkgs_dirs[0], lt=install.LINK_HARD):
+    prefix = state['prefix']
+    index = state['index']
+    install.link(pkgs_dir, prefix, dist, lt, index=index)
+
+
+def UNLINK_CMD(state, dist):
+    install.unlink(state['prefix'], dist)
+
+
+def SYMLINK_CONDA_CMD(state, root_dir):
+    install.symlink_conda(state['prefix'], root_dir)
+
+>>>>>>> conda/feature/instruction-arguments
 
 # Map instruction to command (a python function)
 commands = {
@@ -162,12 +185,15 @@ def execute_instructions(plan, index=None, verbose=False, _commands=None):
             state['i'] += 1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             getLogger('progress.update').info((install.name_dist(arg),
                 state['i']-1))
         cmd = _commands.get(instruction)
 =======
 =======
 >>>>>>> origin/feature/instruction-arguments
+=======
+>>>>>>> conda/feature/instruction-arguments
             getLogger('progress.update').info((args[0], state['i']))
 
         cmd = commands.get(instruction)

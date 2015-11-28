@@ -42,6 +42,7 @@ class TestMisc(unittest.TestCase):
             ([r'w3-1.2-0', 'C:\A B\pkgs', 2], ('w3-1.2-0', r'C:\A B\pkgs', 2))]:
             self.assertEqual(inst.split_linkarg(args), res)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 @pytest.mark.parametrize("args", [
@@ -82,6 +83,8 @@ class add_unlink_TestCase(unittest.TestCase):
         self.assertEqual(2, len(actions[inst.UNLINK]))
 =======
 >>>>>>> origin/feature/instruction-arguments
+=======
+>>>>>>> conda/feature/instruction-arguments
 
 
 class TestAddDeaultsToSpec(unittest.TestCase):
