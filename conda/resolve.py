@@ -7,6 +7,7 @@ import logging
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 from itertools import combinations, chain
 >>>>>>> conda/installed
@@ -19,6 +20,9 @@ from itertools import combinations, chain
 =======
 from itertools import combinations
 >>>>>>> conda/min_constraints
+=======
+from itertools import combinations
+>>>>>>> origin/min_constraints
 from collections import defaultdict
 from functools import partial
 
@@ -35,7 +39,10 @@ from conda.toposort import toposort
 from conda.compat import itervalues, iteritems
 from conda.logic import (Clauses, Linear, false, true, sat, min_sat,
     generate_constraints, bisect_constraints)
+<<<<<<< HEAD
 >>>>>>> conda/min_constraints
+=======
+>>>>>>> origin/min_constraints
 
 log = logging.getLogger(__name__)
 dotlog = logging.getLogger('dotupdate')
@@ -1026,6 +1033,7 @@ class Resolve(object):
         dotlog.debug("Checking for unsatisfiability")
         solution = sat(clauses)
 
+<<<<<<< HEAD
         if not solution:
             if guess:
                 if minimal_hint:
@@ -1053,6 +1061,8 @@ class Resolve(object):
         constraints = bisect_constraints(0, max_rhs, clauses,
             version_constraints, evaluate_func=evaluate_func)
 =======
+=======
+>>>>>>> origin/min_constraints
         sys.stdout.write("Finding package solution")
         sys.stdout.flush()
         # Check the common case first
